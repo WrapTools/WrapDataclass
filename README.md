@@ -27,9 +27,6 @@ This is part of the [WrapTools](https://github.com/WrapTools) ecosystem of compo
 ## 🚀 Installation
 
 ```bash
-# Coming soon via PyPI
-pip install wrapdataclass
-
 # Or clone directly
 git clone https://github.com/WrapTools/WrapDataclass
 

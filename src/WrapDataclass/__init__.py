@@ -1,10 +1,11 @@
 # __init__.py
 
-from .base import BaseModel
-from .mixin_dict import DictMixin
-from .mixin_file import FileMixin
-from .mixin_dictlike import DictLikeMixin
-from .helpers import resolve_dataclass_type, get_list_inner_type
+from .core.base import BaseModel
+from .core.mixin_dict import DictMixin
+from .core.mixin_file import FileMixin
+from .core.mixin_dictlike import DictLikeMixin
+from .core.helpers import resolve_dataclass_type, get_list_inner_type
+
 
 import logging
 

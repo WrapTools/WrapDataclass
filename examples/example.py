@@ -5,20 +5,19 @@ import logging
 
 logging.basicConfig(
     level=logging.DEBUG,
-    format = '%(name)s - %(levelname)s - %(message)s (line: %(lineno)d)',
+    format='%(name)s - %(levelname)s - %(message)s (line: %(lineno)d)',
     handlers=[
-        logging.StreamHandler(),  # Log to console
-        # logging.FileHandler('app.log')  # Log to file
+        logging.StreamHandler(),
+        # logging.FileHandler('app.log')
     ]
 )
 
 from WrapDataclass import BaseModel
 
-# Example
 from dataclasses import dataclass
 from typing import Optional, List
 
-# Assume BaseModel is imported and working
+# === Original Models ===
 
 @dataclass
 class Tag(BaseModel):
@@ -44,7 +43,25 @@ class MainItem(BaseModel):
     metadata: Optional[Metadata] = None
     flags: Optional[List[str]] = None
 
-# Construct a full example
+# === Multi-Section Models ===
+
+@dataclass
+class Summary(BaseModel):
+    highlights: list[str]
+    conclusion: str
+
+@dataclass
+class Evaluation(BaseModel):
+    score: float
+    notes: str
+
+@dataclass
+class DocumentWithSections(BaseModel):
+    summary: Summary
+    evaluation: Evaluation
+
+# === MainItem Example ===
+
 main = MainItem(
     title="Demo Document",
     description="This is a test of the BaseModel system.",
@@ -57,24 +74,19 @@ main = MainItem(
     flags=["important", "review"]
 )
 
-# Save to JSON
 main.to_json("example.json", app_name="DemoApp", data_version="2.1")
 
-# Load from JSON
 loaded = MainItem.from_json("example.json", require_type="MainItem")
 
-# Print main fields
 print(f"Title: {loaded.title}")
 print(f"Description: {loaded.description}")
 print(f"Sub name: {loaded.sub.name}")
 print(f"First tag: {loaded.metadata.tags[0].label}")
 
-# Dict-style access
 print(loaded["title"])      # -> Demo Document
 loaded["title"] = "Updated Title"
 print(loaded.title)         # -> Updated Title
 
-# Iterate fields like a dict
 print("\nFields:")
 for key in loaded.keys():
     print(f" - {key}")
@@ -87,12 +99,10 @@ print("\nItems:")
 for key, val in loaded.items():
     print(f" - {key}: {val}")
 
-# Export to dictionary
 as_dict = loaded.to_dict()
 print("\nDict Export (clean):")
 print(as_dict)
 
-# Print with Header
 item, header = MainItem.from_json_with_header("example.json")
 print("\nHeader information:")
 print(item.title)
@@ -102,4 +112,27 @@ print("\nIterating over model (keys):")
 for key in loaded:
     print(f"{key} -> {loaded[key]}")
 
+# === Multi-Section Example ===
+
+multi = DocumentWithSections(
+    summary=Summary(
+        highlights=["Concise", "Covers edge cases", "Good test coverage"],
+        conclusion="Ready for deployment"
+    ),
+    evaluation=Evaluation(
+        score=9.5,
+        notes="Excellent structure and extensibility."
+    )
+)
+
+multi.to_json("multi_section.json", app_name="WrapTools", data_version="3.0")
+
+# Load and display
+loaded_multi = DocumentWithSections.from_json("multi_section.json")
+print("\n[MultiSectionModel]")
+print("Highlights:", loaded_multi.summary.highlights)
+print("Evaluation Score:", loaded_multi.evaluation.score)
+
+loaded_multi, meta = DocumentWithSections.from_json_with_header("multi_section.json")
+print("Loaded with header:", meta["app_name"], meta["data_version"])
 
