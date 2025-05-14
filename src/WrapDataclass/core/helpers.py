@@ -1,4 +1,8 @@
-# helpers.py
+# core/helpers.py
+"""
+Helper functions for dataclass introspection and type resolution.
+Includes utility functions to handle nested and optional dataclass fields.
+"""
 
 from dataclasses import fields, is_dataclass
 from typing import Any, Union, get_args
@@ -9,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_dataclass_fields(obj: Any):
-    """Return the dataclass fields from an instance or its class."""
+    """Return the fields of a dataclass, from instance or class."""
     return fields(obj.__class__) if not is_dataclass(obj) else fields(obj)
 
 def is_dataclass_type(t: Any) -> bool:
@@ -17,6 +21,7 @@ def is_dataclass_type(t: Any) -> bool:
     return isinstance(t, type) and is_dataclass(t)
 
 def is_list_of_dataclass(t: Any) -> bool:
+    """Determine whether a type is a list of dataclass instances."""
     origin = getattr(t, "__origin__", None)
     args = getattr(t, "__args__", [])
 
@@ -30,7 +35,7 @@ def is_list_of_dataclass(t: Any) -> bool:
 
 
 def resolve_dataclass_type(t: Any) -> Any:
-    """Extract the dataclass type from Optional[T], Union[T, None], or List[T]."""
+    """Extract the dataclass type from Optional, Union, or List containers."""
     if getattr(t, "__origin__", None) is Union:
         for arg in get_args(t):
             if is_dataclass_type(arg):
@@ -38,7 +43,7 @@ def resolve_dataclass_type(t: Any) -> Any:
     return t
 
 def get_list_inner_type(t: Any) -> Any:
-    """Returns the T in List[T], even if wrapped in Optional/Union."""
+    """Extract the inner type from a List[T] or Optional[List[T]]."""
     if getattr(t, "__origin__", None) is Union:
         for arg in get_args(t):
             inner = get_list_inner_type(arg)
@@ -48,5 +53,4 @@ def get_list_inner_type(t: Any) -> Any:
 
     if getattr(t, "__origin__", None) is list:
         return t.__args__[0]
-
     return None

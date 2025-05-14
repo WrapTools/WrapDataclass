@@ -1,3 +1,11 @@
+# record_manager_demo.py
+"""
+Demonstrates WrapDataclass's manager system:
+- Using BaseManager with record types
+- Manual vs auto-generated UUIDs
+- Loading, saving, and inspecting record files
+"""
+
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,7 +18,7 @@ logging.basicConfig(
     format='%(levelname)s - %(message)s'
 )
 
-# === Models ===
+# === Record Models ===
 
 @dataclass
 class Note(BaseRecord):
@@ -22,7 +30,7 @@ class NoteGen(AutoIDRecord):
     title: str
     body: str
 
-# === Manual and Auto ID Examples ===
+# === Manual and Auto ID Save/Load ===
 
 notes_dir = Path("data/notes")
 manager_note = BaseManager(Note, notes_dir)
@@ -47,7 +55,7 @@ print(f"ID: {loaded_note_gen.id}")
 print(f"Title: {loaded_note_gen.title}")
 print(f"Body: {loaded_note_gen.body}")
 
-# === Flexible ID Example (Optional ID) ===
+# === Flexible Record ID Support ===
 
 records_dir = Path("data/flex")
 manager_flex = BaseManager(FlexibleRecord, records_dir)

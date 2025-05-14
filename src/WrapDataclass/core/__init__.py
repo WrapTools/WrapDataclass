@@ -1,4 +1,4 @@
-# __init__.py
+# core/__init__.py
 import logging
 
 # Create a logger for your library

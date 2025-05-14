@@ -1,4 +1,12 @@
-# example.py
+# basic_model_demo.py
+"""
+Demonstrates core usage of WrapDataclass BaseModel:
+- Nested dataclasses
+- Dict-style access
+- Optional and list fields
+- JSON save/load with header
+- Header inspection
+"""
 
 # Configure Logging
 import logging
@@ -21,22 +29,26 @@ from typing import Optional, List
 
 @dataclass
 class Tag(BaseModel):
+    """Single tag with importance level."""
     label: str
     importance: int = 1
 
 @dataclass
 class Metadata(BaseModel):
+    """Metadata including author, created date, and tags."""
     author: str
     created: str
     tags: Optional[List[Tag]] = None
 
 @dataclass
 class SubItem(BaseModel):
+    """Optional nested sub-structure."""
     name: str
     value: Optional[int] = None
 
 @dataclass
 class MainItem(BaseModel):
+    """Main document with optional metadata and sub-objects."""
     title: str
     description: Optional[str] = None
     sub: Optional[SubItem] = None
@@ -60,7 +72,7 @@ class DocumentWithSections(BaseModel):
     summary: Summary
     evaluation: Evaluation
 
-# === MainItem Example ===
+# === Serialize and Load Example ===
 
 main = MainItem(
     title="Demo Document",
@@ -75,18 +87,20 @@ main = MainItem(
 )
 
 main.to_json("example.json", app_name="DemoApp", data_version="2.1")
-
 loaded = MainItem.from_json("example.json", require_type="MainItem")
 
+# === Access Tests ===
 print(f"Title: {loaded.title}")
 print(f"Description: {loaded.description}")
 print(f"Sub name: {loaded.sub.name}")
 print(f"First tag: {loaded.metadata.tags[0].label}")
 
+# Dict-style field access
 print(loaded["title"])      # -> Demo Document
 loaded["title"] = "Updated Title"
 print(loaded.title)         # -> Updated Title
 
+# Keys, values, and items
 print("\nFields:")
 for key in loaded.keys():
     print(f" - {key}")
@@ -99,40 +113,18 @@ print("\nItems:")
 for key, val in loaded.items():
     print(f" - {key}: {val}")
 
+# Convert to dict
 as_dict = loaded.to_dict()
 print("\nDict Export (clean):")
 print(as_dict)
 
+# Load with header info
 item, header = MainItem.from_json_with_header("example.json")
 print("\nHeader information:")
 print(item.title)
 print(header["data_version"])
 
+# Iterating with __getitem__
 print("\nIterating over model (keys):")
 for key in loaded:
     print(f"{key} -> {loaded[key]}")
-
-# === Multi-Section Example ===
-
-multi = DocumentWithSections(
-    summary=Summary(
-        highlights=["Concise", "Covers edge cases", "Good test coverage"],
-        conclusion="Ready for deployment"
-    ),
-    evaluation=Evaluation(
-        score=9.5,
-        notes="Excellent structure and extensibility."
-    )
-)
-
-multi.to_json("multi_section.json", app_name="WrapTools", data_version="3.0")
-
-# Load and display
-loaded_multi = DocumentWithSections.from_json("multi_section.json")
-print("\n[MultiSectionModel]")
-print("Highlights:", loaded_multi.summary.highlights)
-print("Evaluation Score:", loaded_multi.evaluation.score)
-
-loaded_multi, meta = DocumentWithSections.from_json_with_header("multi_section.json")
-print("Loaded with header:", meta["app_name"], meta["data_version"])
-

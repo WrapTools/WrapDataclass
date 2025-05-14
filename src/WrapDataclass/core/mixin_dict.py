@@ -1,4 +1,10 @@
-# mixin_dict.py
+# core/mixin_dict.py
+"""
+DictMixin for serialization of dataclasses.
+
+Provides `to_dict` and `from_dict` methods for serializing dataclass instances,
+including nested dataclasses and lists of dataclasses.
+"""
 
 from dataclasses import is_dataclass
 from typing import Type, TypeVar, get_type_hints, cast
@@ -13,8 +19,16 @@ from .types import T
 
 # DictMixin
 class DictMixin:
-    """Provides to_dict() and from_dict() for nested dataclass conversion."""
+    """Serialization mixin for dataclasses.
+       Supports conversion to and from dictionaries, including nested structures.
+    """
     def to_dict(self, skip_none: bool = True) -> dict:
+        """Convert the dataclass instance to a dictionary.
+                Args:
+                    skip_none (bool): If True, omit fields with None values.
+                Returns:
+                    dict: Dictionary representation of the dataclass.
+        """
         result = {}
         for f in get_dataclass_fields(self):
             value = getattr(self, f.name)
@@ -34,6 +48,12 @@ class DictMixin:
 
     @classmethod
     def from_dict(cls: Type[T], data: dict) -> T:
+        """Reconstruct a dataclass instance from a dictionary.
+                Args:
+                    data (dict): Dictionary to load values from.
+                Returns:
+                    An instance of the dataclass.
+        """
         kwargs = {}
         type_hints = get_type_hints(cls)
 
