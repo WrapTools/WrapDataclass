@@ -1,4 +1,4 @@
-# basic_model_demo.py
+# examples/basic_model_demo.py
 """
 Demonstrates core usage of WrapDataclass BaseModel:
 - Nested dataclasses

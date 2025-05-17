@@ -1,4 +1,4 @@
-# record_manager_demo.py
+# examples/record_manager_demo.py
 """
 Demonstrates WrapDataclass's manager system:
 - Using BaseManager with record types

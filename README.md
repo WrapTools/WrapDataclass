@@ -22,6 +22,7 @@ This is part of the [WrapTools](https://github.com/WrapTools) ecosystem of compo
 | `BaseModel`              | Combines all core mixins for typical use                  |
 | `BaseRecord`             | Dataclass with explicit ID for external control           |
 | `AutoIDRecord`           | Automatically assigns UUIDs for persistence               |
+| `FlexibleRecord`         | UUID, title, and body fields for quick note-taking        |
 | `BaseManager`            | Saves and loads records to/from directory as JSON         |
 | `from_json_with_header()`| Load both data and metadata (app name, data version, etc.)|
 
@@ -30,88 +31,10 @@ This is part of the [WrapTools](https://github.com/WrapTools) ecosystem of compo
 ## 🚀 Installation
 
 ```bash
-# Recommended
 git clone https://github.com/WrapTools/WrapDataclass
+cd WrapDataclass
+pip install -e .
 ````
-
----
-
-## 📦 Structure
-
-```
-WrapDataclass/
-├── core/
-│   ├── base.py               # BaseModel combining all mixins
-│   ├── mixin_dict.py         # Dict serialization logic
-│   ├── mixin_dictlike.py     # Dict-style field access
-│   ├── mixin_file.py         # File-based JSON I/O
-│   ├── helpers.py            # Dataclass type utilities
-│   └── types.py              # TypeVar for reuse
-├── manager/
-│   ├── base_record.py        # BaseRecord, AutoIDRecord, FlexibleRecord
-│   └── base_manager.py       # File manager for persistent models
-```
-
----
-
-## ✍️ Example: Basic Usage
-
-```python
-from dataclasses import dataclass
-from WrapDataclass.core.base import BaseModel
-
-@dataclass
-class Note(BaseModel):
-    title: str
-    body: str
-
-note = Note(title="Hello", body="World")
-note.to_json("note.json", app_name="DemoApp", data_version="1.0")
-
-loaded = Note.from_json("note.json")
-print(loaded.title)        # Hello
-print(loaded["body"])      # World
-```
-
----
-
-## 🗂️ Example: Managing Records with UUIDs
-
-```python
-from dataclasses import dataclass
-from WrapDataclass.manager.base_record import AutoIDRecord
-from WrapDataclass.manager.base_manager import BaseManager
-
-@dataclass
-class Article(AutoIDRecord):
-    title: str
-    body: str
-
-manager = BaseManager(Article, "data/articles")
-article = Article(title="First", body="Example")
-
-manager.save(article)
-loaded = manager.load(article.id)
-print(loaded.title)
-```
-
----
-
-## 📚 Example Files
-
-| File                 | Purpose                                                   |
-| -------------------- | --------------------------------------------------------- |
-| `cradle_to_grave.py` | ✅ End-to-end usage demo — models, manager, metadata       |
-| `example.py`         | Covers dict-style access, JSON I/O, nested fields         |
-| `example_manager.py` | Manual, auto, and flexible ID examples with `BaseManager` |
-
----
-
-## 🧠 Tips
-
-* Use `BaseModel` when you just need structured data + save/load
-* Use `AutoIDRecord` or `BaseRecord` when you want stable IDs with a `BaseManager`
-* Use `from_json_with_header()` to inspect `app_name` or `data_version` when loading
 
 ---
 
@@ -121,6 +44,49 @@ print(loaded.title)
 * No external dependencies
 
 ---
+
+## 📦 Structure
+
+```
+WrapDataclass/
+├── examples/                        # Usage and demonstration scripts
+└── src/
+    └── WrapDataclass/
+        ├── core/
+        │   ├── base.py               # BaseModel combining all mixins
+        │   ├── mixin_dict.py         # Dict serialization logic
+        │   ├── mixin_dictlike.py     # Dict-style field access
+        │   ├── mixin_file.py         # File-based JSON I/O
+        │   ├── helpers.py            # Dataclass type utilities
+        │   ├── types.py              # TypeVar for reuse
+        ├── manager/
+        │   ├── base_record.py        # BaseRecord, AutoIDRecord, FlexibleRecord
+        │   └── base_manager.py       # File manager for persistent models
+        └── __init__.py
+```
+
+---
+
+## 📚 Example Files
+
+Full, runnable usage examples are provided in the [examples/](examples) folder:
+
+| File                     | Purpose                                                   |
+| ------------------------ | --------------------------------------------------------- |
+| `cradle_to_grave.py`     | End-to-end usage demo — models, manager, metadata         |
+| `base_model_demo.py`     | Dict-style access, JSON I/O, nested fields, inspection    |
+| `record_manager_demo.py` | Manual, auto, and flexible ID examples with `BaseManager` |
+
+---
+
+## 🧠 Tips
+
+* Use `BaseModel` when you just need structured data + save/load.
+* Use `AutoIDRecord` or `BaseRecord` when you want stable IDs with a `BaseManager`.
+* Use `from_json_with_header()` to inspect `app_name` or `data_version` when loading.
+
+---
+
 
 ## 🔓 License
 

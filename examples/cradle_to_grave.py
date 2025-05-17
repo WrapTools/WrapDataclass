@@ -1,4 +1,4 @@
-# cradle_to_grave.py
+# examples/cradle_to_grave.py
 """
 Comprehensive usage example for WrapDataclass library.
 
